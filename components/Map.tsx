@@ -38,7 +38,7 @@ export default function Map() {
     return (
         <View style={styles.container}>
             <MapView style={styles.map} styleURL="mapbox://styles/mapbox/dark-v11">                
-                <Camera zoomLevel={15} centerCoordinate={coords} pitch={60}/> 
+                <Camera zoomLevel={15} centerCoordinate={coords} /> 
                 <LocationPuck puckBearingEnabled={true} puckBearing="heading" pulsing={{ isEnabled: true }} />
                
                 <LandmarkMarkers />

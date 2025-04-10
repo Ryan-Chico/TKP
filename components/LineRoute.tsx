@@ -20,7 +20,7 @@ export default function LineRoute({coordinates}: {coordinates: Position[]})
             <LineLayer
                 id="lineLayer"
                 style={{
-                    lineColor: '#42A2D9',
+                    lineColor: '#6366F1',
                     lineCap: 'round',
                     lineJoin: 'round',
                     lineWidth: 3,

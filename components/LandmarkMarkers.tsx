@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { CircleLayer, Images, ShapeSource, SymbolLayer } from "@rnmapbox/maps";
 import { OnPressEvent } from "@rnmapbox/maps/lib/typescript/src/types/OnPressEvent";
-import pin from '../assets/pin.png';
+import pin from '../assets/pinB.png';
 import landmarks from '../data/landmark.json';
 import { featureCollection, point } from '@turf/helpers';
 
@@ -32,7 +32,7 @@ export default function LandmarkMarkers(){
                 filter={['has', 'point_count']}
                 style={{
                     circleRadius: 15,
-                    circleColor: 'red',
+                    circleColor: '#6366F1',
                     circlePitchAlignment: 'map',
                     circleOpacity: 0.7,
                     circleStrokeWidth: 2,

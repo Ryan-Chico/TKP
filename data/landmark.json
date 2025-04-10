@@ -9,11 +9,14 @@
     },
     {
         "id": "2",
-        "name": "STI College Caloocan",
-        "imageUrl": "https://example.com/sti_caloocan.jpg",
+        "name": "Palacio Del Gobernador",
+        "imageUrl": "https://media.interaksyon.com/wp-content/uploads/2022/02/palacio-del-gobernador.jpg",
         "latitude": 14.6578,
         "longitude": 120.9769,
-        "description": "A well-known college in Caloocan, Philippines."
+        "status": "Closed",
+        "entrace": "Free",
+        "address:": "Plaza Roma, Intramuros, Manila, Philippines",
+        "description": "The Palacio del Gobernador (Governor's Palace) is a notable government building located in Intramuros, Manila, Philippines. It stands southwest of Plaza de Roma and was constructed in its current form in 1976. "
     },
     {
         "id": "3",
