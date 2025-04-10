@@ -1,41 +1,98 @@
-{
-  "expo": {
-    "name": "TKP2",
-    "slug": "TKP2",
-    "version": "1.0.0",
-
-    "scheme": "TKP2",
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": ["expo-router"],
-    "experiments": {
-      "typedRoutes": true,
-
-      "tsconfigPaths": true
-    },
-
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-
-    "userInterfaceStyle": "light",
-
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "assetBundlePatterns": ["**/*"],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
-    }
+[
+  {
+    "id": "1",
+    "name": "Malabon National High School",
+    "imageUrl": "https://example.com/malabon_nhs.jpg",
+    "latitude": 14.6500,
+    "longitude": 120.9600,
+    "description": "A prominent public high school in Malabon, Philippines."
+  },
+  {
+    "id": "2",
+    "name": "STI College Caloocan",
+    "imageUrl": "https://example.com/sti_caloocan.jpg",
+    "latitude": 14.6578,
+    "longitude": 120.9769,
+    "description": "A well-known college in Caloocan, Philippines."
+  },
+  {
+    "id": "3",
+    "name": "University of Caloocan City",
+    "imageUrl": "https://example.com/ucc_caloocan.jpg",
+    "latitude": 14.6434,
+    "longitude": 120.9606,
+    "description": "A major public university in Caloocan, offering various degree programs."
+  },
+  {
+    "id": "4",
+    "name": "Longos National High School",
+    "imageUrl": "https://example.com/longos_nhs.jpg",
+    "latitude": 14.6407,
+    "longitude": 120.9574,
+    "description": "A public high school located in Longos, Malabon."
+  },
+  {
+    "id": "5",
+    "name": "Caloocan City Science High School",
+    "imageUrl": "https://example.com/caloocan_science_hs.jpg",
+    "latitude": 14.6369,
+    "longitude": 120.9704,
+    "description": "A specialized high school offering science and technology-focused education in Caloocan."
+  },
+  {
+    "id": "6",
+    "name": "Malabon Polytechnic College",
+    "imageUrl": "https://example.com/mpc_malabon.jpg",
+    "latitude": 14.6363,
+    "longitude": 120.9679,
+    "description": "A technical-vocational school offering college courses in Malabon."
+  },
+  {
+    "id": "7",
+    "name": "SM City Mall Caloocan",
+    "imageUrl": "https://example.com/sm_caloocan.jpg",
+    "latitude": 14.6449,
+    "longitude": 120.9712,
+    "description": "A large shopping mall in Caloocan featuring various retail stores and dining options."
+  },
+  {
+    "id": "8",
+    "name": "Malabon Zoo",
+    "imageUrl": "https://example.com/malabon_zoo.jpg",
+    "latitude": 14.6465,
+    "longitude": 120.9450,
+    "description": "A small family-friendly zoo in Malabon featuring various animals."
+  },
+  {
+    "id": "9",
+    "name": "Monumento Circle",
+    "imageUrl": "https://example.com/monumento_circle.jpg",
+    "latitude": 14.6367,
+    "longitude": 120.9762,
+    "description": "A major landmark in Caloocan, known for the monument commemorating Philippine heroes."
+  },
+  {
+    "id": "10",
+    "name": "Caloocan Cathedral",
+    "imageUrl": "https://example.com/caloocan_cathedral.jpg",
+    "latitude": 14.6354,
+    "longitude": 120.9773,
+    "description": "A historic Roman Catholic cathedral in Caloocan City, known for its architectural beauty."
+  },
+  {
+    "id": "11",
+    "name": "Navotas Fish Port Complex",
+    "imageUrl": "https://example.com/navotas_fish_port.jpg",
+    "latitude": 14.6514,
+    "longitude": 120.9445,
+    "description": "One of the largest fish ports in the Philippines, located in nearby Navotas, supplying fresh seafood."
+  },
+  {
+    "id": "12",
+    "name": "Plaza Rizal",
+    "imageUrl": "https://example.com/plaza_rizal.jpg",
+    "latitude": 14.6451,
+    "longitude": 120.9573,
+    "description": "A public park and historical site in Malabon dedicated to Philippine national hero Jose Rizal."
   }
-}
+]
