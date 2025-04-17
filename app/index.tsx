@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Stack, Link, useNavigation } from 'expo-router';
+import { Stack, Link, useNavigation, Tabs } from 'expo-router';
 import { StatusBar, Text } from 'react-native';
 import Map from '~/components/Map';
 import LandmarkProvider from '~/provider/LandmarkProvider';
@@ -10,20 +10,15 @@ export default function Home() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Navigation', headerShown: false }} />
-    <GestureHandlerRootView style={{ flex: 1 }}>
-
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Tabs />
         <LandmarkProvider>
           <Map />
           <SelectedLandmarkSheet />
 
         </LandmarkProvider>
-      
-    </GestureHandlerRootView>
-     
-      
 
-
+      </GestureHandlerRootView>
     </>
   );
 }
