@@ -12,8 +12,8 @@ import LandmarkMarkers from './LandmarkMarkers';
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_KEY || '');
 
 export default function Map() {
-    const { directionCoordinates, routeTime, routeDistance } = useLandmark();
-    console.log("Route Time: ", routeTime, "Distance:", routeDistance);
+    const { directionCoordinates, duration, distance } = useLandmark();
+    console.log("Route Time: ", duration, "Distance:", distance);
 
     const [coords, setCoords] = useState<[number, number]>([0, 0]);
     const getPermissionLocation = () => {

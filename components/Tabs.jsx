@@ -5,12 +5,12 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Entypo from '@expo/vector-icons/Entypo';
 import ARScreen from '~/app/AR_Cam';
-
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 const TabBar = ({ state, descriptors, navigation }) => {
     const icons = {
         index: (props) => <Entypo name="map" size={24} color={inactiveColor} {...props} />,
         search: (props) => <FontAwesome name="search" size={24} color={inactiveColor}{...props} />,
-        AR_Cam: (props) => <Entypo name="camera" size={24} color={inactiveColor} {...props} />,
+        AR_Cam: (props) => <MaterialCommunityIcons name="cube-scan" size={24} color={inactiveColor} {...props} />,
         notification: (props) => <Ionicons name="notifications" size={24} color={inactiveColor} {...props} />,
         profile: (props) => <Ionicons name="person" size={24} color={inactiveColor} {...props} />,
     }
@@ -80,7 +80,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
 const styles = StyleSheet.create({
     tabBar: {
         position: "absolute",
-        bottom: 25,
+        top: 40,
         flexDirection: "row",
         backgroundColor: "#ffffff",
         justifyContent: "space-between",

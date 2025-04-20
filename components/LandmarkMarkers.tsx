@@ -17,7 +17,7 @@ export default function LandmarkMarkers(){
 
     };
     return(
-        <ShapeSource id="landmarks" cluster shape={featureCollection(points)}
+        <ShapeSource id="landmarks" shape={featureCollection(points)}
             onPress={onPointPress}>
 
             <SymbolLayer id="cluster-count"
@@ -27,19 +27,7 @@ export default function LandmarkMarkers(){
                     textPitchAlignment: 'map',
                 }} />
 
-            <CircleLayer
-                id='cluster'
-                filter={['has', 'point_count']}
-                style={{
-                    circleRadius: 15,
-                    circleColor: '#6366F1',
-                    circlePitchAlignment: 'map',
-                    circleOpacity: 0.7,
-                    circleStrokeWidth: 2,
-                    circleStrokeColor: 'white',
-                }}
-            />
-
+            
             <SymbolLayer id="landmark-icons"
                 filter={['!', ['has', 'point_count']]}
                 style={{

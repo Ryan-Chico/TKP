@@ -28,7 +28,7 @@ export default function Layout() {
       <Tabs.Screen
         name="AR_Cam"
         options={{
-          title: "AR Cam"
+          title: "AR"
         }}
       />
       <Tabs.Screen
