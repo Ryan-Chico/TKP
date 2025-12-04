@@ -4,10 +4,14 @@ import * as FileSystem from 'expo-file-system';
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../components/Button";
 import { SHARED_ASSETS_DIR, getFilenameFromUrl, getSafeDirName } from '../utils/fileSystems';
+import TextToSpeech from "../components/TextToSpeech";
+import Tts from "react-native-tts";
+
 
 const AssetItem = ({ item, navigation, mode }) => {
     const [status, setStatus] = useState('checking');
     const [progress, setProgress] = useState(0);
+    const [speakingId, setSpeakingId] = useState(null);
 
     const requiredFiles = useMemo(() => {
         const files = [
@@ -103,12 +107,28 @@ const AssetItem = ({ item, navigation, mode }) => {
                 );
         }
     };
-
+    useEffect(() => {
+        return () => {
+            // Stop any playing TTS when leaving screen
+            Tts.stop();
+        };
+    }, []);
     return (
         <View style={styles.item}>
+            
             <View style={styles.itemHeader}>
+                
                 <Image source={{ uri: item.imageUrl }} style={styles.image} />
                 <Text style={styles.itemText}>{item.name}</Text>
+                <TextToSpeech
+                    style={{
+                        position: "absolute",
+                        right: 10,
+                        top: 8
+                    }
+                    }
+                    textToSpeak={item.description}
+                />
             </View>
             <Text style={styles.itemDescription}>{item.description}</Text>
             <View style={styles.itemFooter}>

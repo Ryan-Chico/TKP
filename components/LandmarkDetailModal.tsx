@@ -12,7 +12,8 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Video from 'react-native-video';
-
+import TextToSpeech from "./TextToSpeech";
+import Tts from "react-native-tts";
 type Marker = {
     id: string;
     name: string;
@@ -42,7 +43,7 @@ const LandmarkDetailModal = ({
     getOpenStatus,
 }: LandmarkDetailModalProps) => {
     const [isPlaying, setIsPlaying] = useState(false);
-    const [isAudioLoading, setIsAudioLoading] = useState(false);
+ 
     const videoRef = useRef<Video>(null);
 
     if (!marker) return null;
@@ -53,12 +54,19 @@ const LandmarkDetailModal = ({
 
     const statusColor = isAvailable ? "#28a745" : isUnavailable ? "#dc3545" : "#6c757d";
 
+ 
+
     const handleClose = () => {
-        if (isPlaying) {
-            setIsPlaying(false);
-        }
+      
+        setIsPlaying(false);
+
+     
+        Tts.stop();
+
+      
         onClose();
     };
+
 
     const handleAudioToggle = () => {
         setIsPlaying(!isPlaying);
@@ -71,29 +79,22 @@ const LandmarkDetailModal = ({
             animationType="fade"
             onRequestClose={handleClose}
         >
-            {marker.audio && (
-                <Video
-                    ref={videoRef}
-                    source={{ uri: marker.audio }}
-                    paused={!isPlaying}
-                    audioOnly
-                    onLoadStart={() => setIsAudioLoading(true)}
-                    onLoad={() => setIsAudioLoading(false)}
-                    onEnd={() => setIsPlaying(false)}
-                    onError={(error) => {
-                        console.error("Audio playback error:", error);
-                        setIsPlaying(false);
-                        setIsAudioLoading(false);
-                    }}
-                    style={{ height: 0, width: 0 }}
-                />
-            )}
+           
 
             <View style={styles.modalOverlay}>
                 <View style={styles.modalContainer}>
                     <Image
                         source={{ uri: marker.image }}
                         style={styles.modalImage}
+                    />
+                    <TextToSpeech
+                        style={{
+                            position: "absolute",
+                            right: 10,
+                            top: 160
+                        }
+                        }
+                        textToSpeak={marker.description}
                     />
                     <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
                         <Icon name="close-circle" size={30} color="#fff" />
@@ -103,9 +104,13 @@ const LandmarkDetailModal = ({
                         style={styles.contentContainer}
                         showsVerticalScrollIndicator={false}
                     >
+                      
+                            
                         <Text style={styles.modalCategory}>{marker.category.toUpperCase()}</Text>
+              
                         <Text style={styles.modalTitle}>{marker.name}</Text>
-
+                        
+                    
                         {/* Status Section */}
                         <View style={styles.infoRow}>
                             <Icon name="time-outline" size={18} color={statusColor} />
@@ -118,39 +123,18 @@ const LandmarkDetailModal = ({
                             <Text style={styles.modalAddress}>{marker.address}</Text>
                         </View>
 
-                        {marker.audio && (
-                            <View style={styles.audioControlWrapper}>
-                                <TouchableOpacity
-                                    style={styles.audioPlayButton}
-                                    onPress={handleAudioToggle}
-                                    disabled={isAudioLoading}
-                                >
-                                    {isAudioLoading ? (
-                                        <ActivityIndicator size="small" color="#FFF" />
-                                    ) : (
-                                        <FontAwesome
-                                            name={isPlaying ? 'pause' : 'play'}
-                                            size={20}
-                                            color="#FFF"
-                                        />
-                                    )}
-                                </TouchableOpacity>
-                                <Text style={styles.audioLabel}>
-                                    {isAudioLoading
-                                        ? 'Loading audio...'
-                                        : isPlaying
-                                            ? 'Audio playing'
-                                            : 'Play audio'}
-                                </Text>
-                            </View>
-                        )}
+                       
 
                         <Text style={styles.modalDescription}>{marker.description}</Text>
                     </ScrollView>
 
                     <TouchableOpacity
                         style={styles.navigateButton}
-                        onPress={() => onNavigate(marker)}
+                        onPress={() => {
+                            handleClose();
+                            onNavigate(marker);
+                        }}
+
                     >
                         <Text style={styles.navigateButtonText}>Navigate</Text>
                     </TouchableOpacity>

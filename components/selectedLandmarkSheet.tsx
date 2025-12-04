@@ -19,7 +19,7 @@ import { db } from "../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { startOfWeek, endOfWeek, isWithinInterval, addWeeks } from "date-fns";
 import { Linking } from "react-native";
-
+import Tts from 'react-native-tts';
 import SkeletonBox from "../components/Skeleton";
 import ModeSelector from "./ModeSelector";
 import LottieView from "lottie-react-native";
@@ -27,14 +27,17 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../Navigation/types";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-import Video from 'react-native-video';
-import { SHARED_ASSETS_DIR, getFilenameFromUrl, getSafeDirName } from '../utils/fileSystems';
+import TextToSpeech from "./TextToSpeech";
+import Video from "react-native-video";
+import Orientation from "react-native-orientation-locker";
+
 export default function SelectedLandmarkSheet() {
     const [isImageModalVisible, setImageModalVisible] = useState(false);
     const [averageRating, setAverageRating] = useState<number | null>(null);
     const [reviewCount, setReviewCount] = useState<number>(0);
     const [eventInProgress, setEventInProgress] = useState(false);
     const { selectedLandmark, duration, distance, loadingDirection, loadDirection, mode, setMode } = useLandmark() as any;
+    const videoRef = useRef<Video>(null);
 
     const bottomSheetRef = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ["50%", "90%"], []);
@@ -44,12 +47,19 @@ export default function SelectedLandmarkSheet() {
     const navigation = useNavigation<NavigationProp>();
 
     const [isPlaying, setIsPlaying] = useState(false);
-    const [isAudioLoading, setIsAudioLoading] = useState(false);
-    const videoRef = useRef<Video>(null);
+    const videoUrl = selectedLandmark?.videoUrl; 
 
-    const handleAudioToggle = () => {
-        setIsPlaying(!isPlaying);
+    const speechButtonRef = useRef<SpeechButtonRef>(null);
+
+    const enterFullScreen = () => {
+        Orientation.lockToLandscape();
     };
+
+    const exitFullScreen = () => {
+        Orientation.lockToPortrait();
+    };
+   
+  
     const handleNavigateToAssetList = async (mode) => {
         if (!selectedLandmark) return;
         bottomSheetRef.current?.close();
@@ -227,70 +237,8 @@ export default function SelectedLandmarkSheet() {
             setReviewCount(0);
         }
     };
-    const handleView3D = async () => {
-        if (!selectedLandmark) return;
 
-        try {
-            const ref = doc(db, "arTargets", selectedLandmark.name);
-            const snap = await getDoc(ref);
 
-            if (!snap.exists()) {
-                Alert.alert("Not Found", `No 3D model found for: ${selectedLandmark.name}`);
-                return;
-            }
-
-            navigation.navigate("View3D", {
-                modelUrl: snap.data().modelUrl,
-                title: selectedLandmark.name,
-            });
-        } catch (e) {
-            console.error("Error preparing 3D view:", e);
-        }
-    };
-
-    const handleViewRelics = async () => {
-        try {
-            const q = query(
-                collection(db, "arTargets"),
-                where("category", "==", "Relics/Artifacts"),
-                where("locationName", "==", selectedLandmark.name)
-            );
-            const querySnapshot = await getDocs(q);
-            const relics = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-
-            if (relics.length === 0) {
-                Alert.alert("No Relics Found", `No relics or artifacts are listed for ${selectedLandmark.name}.`);
-                return;
-            }
-
-            navigation.navigate("RelicList", {
-                relics,
-                title: selectedLandmark.name,
-            });
-        } catch (e) { console.error("Error fetching relics:", e); }
-    };
-
-    const handleViewAR = async () => {
-        try {
-            const targetId = selectedLandmark.name;
-            const ref = doc(db, "arTargets", targetId);
-            const snap = await getDoc(ref);
-
-            if (!snap.exists()) {
-                Alert.alert("Not Found", `No AR target found for: ${targetId}`);
-                return;
-            }
-
-            navigation.navigate("ArCam", {
-                arTargetId: targetId,
-            });
-        } catch (e) { console.error("Error loading AR target:", e); }
-    };
-
-    const handleGetDirection = () => loadDirection();
 
     if (!selectedLandmark) return null;
 
@@ -319,7 +267,7 @@ export default function SelectedLandmarkSheet() {
         if (openMinutes == null || closeMinutes == null) return false;
 
         if (openMinutes === 0 && closeMinutes === 23 * 60 + 59) return true;
-
+       
         const withinHours =
             closeMinutes > openMinutes
                 ? currentTime >= openMinutes && currentTime < closeMinutes
@@ -356,26 +304,14 @@ export default function SelectedLandmarkSheet() {
             snapPoints={snapPoints}
             enablePanDownToClose={true}
             backgroundStyle={styles.sheetBackground}
-            onClose={() => setIsPlaying(false)}
+            onClose={() => {
+                setIsPlaying(false);
+                videoRef.current?.seek(0);   
+                
+                speechButtonRef.current?.stop();
+            }}
         >
-            {selectedLandmark.audio && (
-                <Video
-                    ref={videoRef}
-                    source={{ uri: selectedLandmark.audio }}
-                    paused={!isPlaying}
-                    audioOnly
-                    onLoadStart={() => setIsAudioLoading(true)}
-                    onLoad={() => setIsAudioLoading(false)}
-                    onEnd={() => setIsPlaying(false)}
-                    onError={(error) => {
-                        console.error("Audio playback error:", error);
-                        Alert.alert("Playback Error", "This audio guide could not be played.");
-                        setIsPlaying(false);
-                        setIsAudioLoading(false);
-                    }}
-                    style={{ height: 0, width: 0 }}
-                />
-            )}
+           
             <BottomSheetScrollView contentContainerStyle={styles.scrollContainer}>
                 {loadingSheet ? (
                     <View>
@@ -547,8 +483,20 @@ export default function SelectedLandmarkSheet() {
 
                         {/* Description */}
                         <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Historical Background</Text>
-                            <Text style={[styles.description, selectedLandmark.audio && styles.descriptionWithAudio]}>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                                    <Text style={styles.sectionTitle}>Historical Background</Text>
+                                    <TextToSpeech
+                                        ref={speechButtonRef}
+                                        textToSpeak={selectedLandmark.description}
+                                        
+                                    />
+
+                            </View>
+                          
+                                <Text style={styles.description}>
+                             
+                                      
+                           
                                 {selectedLandmark.description
                                     ? selectedLandmark.description.split("\n").map((paragraph: string, pIndex: number) => (
                                         <Text key={pIndex}>
@@ -571,32 +519,7 @@ export default function SelectedLandmarkSheet() {
                                     : "No description provided."}
                             </Text>
 
-                            {selectedLandmark.audio && (
-                                <View style={styles.audioControlWrapper}>
-                                    <TouchableOpacity
-                                        style={styles.audioPlayButton}
-                                        onPress={handleAudioToggle} // Use the consolidated toggle handler
-                                        disabled={isAudioLoading}
-                                    >
-                                        {isAudioLoading ? (
-                                            <ActivityIndicator size="small" color="#FFF" />
-                                        ) : (
-                                            <FontAwesome
-                                                name={isPlaying ? 'pause' : 'play'}
-                                                size={20} // Match LandmarkDetailModal size
-                                                color="#FFF"
-                                            />
-                                        )}
-                                    </TouchableOpacity>
-                                    <Text style={styles.audioLabel}>
-                                        {isAudioLoading
-                                            ? 'Loading audio...'
-                                            : isPlaying
-                                                ? 'Audio playing'
-                                                : 'Play audio'}
-                                    </Text>
-                                </View>
-                            )}
+                           
                         </View>
 
                         {/* Rating */}
@@ -649,11 +572,33 @@ export default function SelectedLandmarkSheet() {
                                     </TouchableOpacity>
                                 </View>
                             </View>
+                            
                         )}
+                                   
+                            {videoUrl ? (
+                                <Video
+
+                                    ref={videoRef}
+                                    source={{ uri: videoUrl }}
+                                    style={{ width: "100%", height: 200 }}
+                                    paused={!isPlaying}
+                                    resizeMode="cover"
+                                    controls
+                                    repeat={false}
+                                    onFullscreenPlayerWillPresent={enterFullScreen}
+                                    onFullscreenPlayerWillDismiss={exitFullScreen}
+
+                                />
+                            ) : (
+                                <Text style={{ marginTop: 10 }}>No video available.</Text>
+                            )}
+                            
+
 
                     </>
 
                 )}
+               
             </BottomSheetScrollView>
         </BottomSheet>
     );
@@ -749,7 +694,7 @@ export default function SelectedLandmarkSheet() {
         fontWeight: "700",
         fontSize: 18,
         color: "#3E2723",
-        marginBottom: 10,
+        
         letterSpacing: 0.4,
     },
     hoursText: {
@@ -851,29 +796,6 @@ export default function SelectedLandmarkSheet() {
         marginBottom: 10,
     },
 
-    audioControlWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 8,
-    },
-    audioPlayButton: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: "#8A6F57",
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 15,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 3,
-        elevation: 3,
-    },
-    audioLabel: {
-        color: "#6B5E5E",
-        fontSize: 14,
-        fontWeight: '500',
-        flex: 1,
-    },
+
+    
 });

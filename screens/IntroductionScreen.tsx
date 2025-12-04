@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     Animated,
     ActivityIndicator,
+    
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -20,22 +21,26 @@ import LottieView from 'lottie-react-native';
 import { useUser } from '../context/UserContext';
 import { db } from '../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
-
+import Video from 'react-native-video';
 const { width, height } = Dimensions.get('window');
+const confettiSource = require('../assets/animations/Confetti_IM.json');
 
 const slides = [
     {
         key: '1',
+        title: 'Discover Intramuros',
+        text: "Intramuros, often called the \"Walled City,\" is the historic heart of Manila, Philippines. Established in the late 16th century during the Spanish colonial period, it served as the political, religious, and military center of the colony. Its stone walls, gates, and fortifications were built to protect the city from foreign invasions and local uprisings, making it a symbol of resilience and heritage. Today, Intramuros stands as a cultural and historical landmark, offering visitors a glimpse into the Philippines’ colonial past. Within its walls lie churches, schools, museums, plazas, and residences that showcase Spanish architecture, urban planning, and rich traditions. Walking through Intramuros is like stepping back in time, where each cobblestone street tells stories of battles, governance, and everyday life in centuries past. It is not only a major tourist attraction but also a living testament to Filipino history, identity, and cultural preservation.",
+        video: require('../assets/VTour.mp4'),
+    },
+
+
+    {
+        key: '2',
         title: 'Welcome to Tourkita!',
         text: 'Your personal guide to exploring the rich history and culture of Intramuros, the Walled City.',
         image: { uri: 'https://admin-login-244c5.web.app/static/media/TourKitaCropped.da93bb302223e3efab3a.jpg' },
     },
-    {
-        key: '2',
-        title: 'Discover Intramuros',
-        text: 'Learn about historical landmarks and museums managed by the Intramuros Administration (IA).',
-        image: { uri: 'https://media.istockphoto.com/id/1370829793/photo/manila-philippines-aerial-of-intramuros-a-historic-walled-area-surrounded-by-golf-courses-and.jpg?s=612x612&w=0&k=20&c=_8SqMZaOEaQF140ZNd9c4tbChorJHyyG0Xs2If7qXJ0=' },
-    },
+   
     {
         key: '3',
         title: 'Augmented Reality',
@@ -138,15 +143,35 @@ const IntroductionScreen = () => {
             >
                 {slides.map((slide) => (
                     <View key={slide.key} style={styles.slide}>
+
                         {slide.animation && <SlideAnimation source={slide.animation} />}
                         {slide.image && <SlideImage source={slide.image} />}
+                  
+                        {slide.video && (
+                            <View style={styles.mediaContainer}>
+                                <Video
+                                    source={slide.video}
+                                    style={styles.media}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                        )}
+                        <Text style={styles.title}>{slide.title}</Text>
+                        <LottieView
+                            source={confettiSource}
+                            autoPlay
+                            loop={false}
+                            style={{ position: "absolute", height: "125%", width: "125%" }}
+                        />
 
-                        <View style={styles.textContainer}>
-                            <Text style={styles.title}>{slide.title}</Text>
+                        {/* Scrollable text */}
+                        <ScrollView style={styles.scrollTextContainer} contentContainerStyle={{ alignItems: 'center' }}>
+                          
                             <Text style={styles.text}>{slide.text}</Text>
-                        </View>
+                        </ScrollView>
                     </View>
                 ))}
+
             </Animated.ScrollView>
 
             <View style={styles.bottomContainer}>
@@ -266,6 +291,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
+    scrollTextContainer: {
+        width: width,
+        maxHeight: height * 0.35, // adjust to fit below video
+        paddingHorizontal: 20,
+        marginTop: 20,
+    },
+
 });
 
 export default IntroductionScreen;

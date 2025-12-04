@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     Alert,
-    
+    Image
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import TopHeader from "../components/TopHeader";
@@ -117,6 +117,17 @@ const SupportScreen = () => {
                         onPress={() => navigation.navigate("Feedback")}
                     />
                 )}
+
+                <TouchableOpacity style={{ alignSelf: "center" }}
+                    onPress={() => navigation.navigate("Introduction")}
+                >
+                    <Image
+                        source={require("../assets/ia_logo.png")}
+                        style={styles.logo}
+                       
+                    />
+                </TouchableOpacity>
+
             </ScrollView>
             <BottomFooter active="" />
         </SafeAreaView>
@@ -181,6 +192,13 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: "#6B5E5E",
     },
+    logo: {
+        top:"50%",  
+        width: 120,      
+        height: 120,     
+        resizeMode: "contain",
+    },
+
 });
 
 export default SupportScreen;
